@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: concert-booking
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:concert_booking}
+    username: ${POSTGRES_USER:concert_user}
+    password: ${POSTGRES_PASSWORD:concert_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 5000ms
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:geekup-concert-booking-jwt-secret-key-256-bits-long-enough}
+    access-token-expiry: ${JWT_ACCESS_TOKEN_EXPIRY:900000}
+    refresh-token-expiry: ${JWT_REFRESH_TOKEN_EXPIRY:604800000}
+  payment:
+    webhook-secret: ${PAYMENT_WEBHOOK_SECRET:webhook-secret-key-change-in-production}
+  booking:
+    hold-ttl-minutes: 10
+    max-tickets-per-booking: 8
+  cache:
+    concert-list-ttl: 30
+    concert-detail-ttl: 30
+    availability-ttl: 5
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+
+logging:
+  level:
+    com.geekup.concert: INFO
+    org.springframework.security: DEBUG
